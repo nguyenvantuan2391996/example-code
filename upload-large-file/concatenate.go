@@ -8,7 +8,7 @@ import (
 
 func concatenateVideo(length int) bool {
 	// Open the output file for writing
-	outputFile, err := os.Create("./upload-file/output.mp4")
+	outputFile, err := os.Create("./upload-large-file/output.mp4")
 	if err != nil {
 		fmt.Println("Error:", err)
 		return false
@@ -23,7 +23,7 @@ func concatenateVideo(length int) bool {
 	// List the video chunks in the desired order
 	chunkPaths := make([]string, 0)
 	for i := 0; i < length; i++ {
-		chunkPaths = append(chunkPaths, fmt.Sprintf("upload-file/video%v", i))
+		chunkPaths = append(chunkPaths, fmt.Sprintf("upload-large-file/video%v", i))
 	}
 
 	// Concatenate the video chunks
