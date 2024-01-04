@@ -26,7 +26,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	}(file)
 
 	// Process and save the chunk to a file
-	outputFile, err := os.Create(fmt.Sprintf("./upload-file/video%v", index))
+	outputFile, err := os.Create(fmt.Sprintf("./upload-large-file/video%v", index))
 	if err != nil {
 		http.Error(w, "Failed to create file", http.StatusInternalServerError)
 		return
