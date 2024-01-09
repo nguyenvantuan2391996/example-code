@@ -3,8 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>Design url shortener</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.2.0/css/mdb.css">
 </head>
 <body>
-  <h1>Design url shortener</h1>
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">url shortener service</a>
+        </div>
+    </div>
+</nav>
+<p class="text-center">Enter any long URL Lets shorten it!</p>
+<div class="form-group" style="width: 50%; margin-left: 25%; text-align: -webkit-center;">
+    <label for="longURL"></label>
+    <input class="form-control" type="text" id="longURL" placeholder="Enter URL" required>
+    <label for="shortenURL"></label>
+    <input class="form-control" type="text" id="shortenURL" placeholder="Short URL">
+    <button class="btn btn-success" type="submit" id="shorten" onclick="handleShortURL()">SHORTEN</button>
+</div>
 </body>
 </html>
+<script>
+    const DOMAIN_SHORT_URL = "http://localhost:3000"
+    async function handleShortURL() {
+        let longURL = document.getElementById("longURL").value
+        // call the api to generate short url
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        const raw = JSON.stringify({
+            "url": longURL
+        });
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        await fetch(DOMAIN_SHORT_URL + "/generate-short-url", requestOptions).then(response => {
+            if (!response.ok) {
+                alert("Something went wrong")
+            }
+            return response.text()
+        }).then(result => {
+            document.getElementById("shortenURL").value = result
+        }).catch(error => {
+            console.log('error', error)
+            alert("Something went wrong")
+        });
+    }
+</script>
