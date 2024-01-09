@@ -43,17 +43,6 @@ type URL struct {
 }
 
 func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Origin, Authorization")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
-	// Handle preflight requests
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
 	// Read the body request
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -109,17 +98,6 @@ func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *HandlerAPI) redirectHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Origin, Authorization")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
-	// Handle preflight requests
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
 	longURL, err := h.GetURLByQueries(r.Context(), map[string]interface{}{
 		"short_url": Domain + strings.TrimLeft(r.RequestURI, "/"),
 	})
@@ -135,15 +113,37 @@ func (h *HandlerAPI) redirectHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, longURL.LongURL, http.StatusMovedPermanently)
 }
 
+func Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Origin, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		// Handle preflight requests
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (h *HandlerAPI) Create(ctx context.Context, record *URL) error {
 	err := h.DBClient.Create(record).Error
 	if err != nil {
 		return err
 	}
 
-	go func() {
-		h.RedisClient.Set(ctx, record.ShortURL, record.LongURL, ExpiredHours*time.Hour)
-	}()
+	data, errMarshal := json.Marshal(record)
+	if errMarshal != nil {
+		return nil
+	}
+	_, err = h.RedisClient.Set(ctx, record.ShortURL, data, ExpiredHours*time.Hour).Result()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -152,9 +152,9 @@ func (h *HandlerAPI) GetURLByQueries(ctx context.Context, queries map[string]int
 	var record *URL
 
 	// get from redis
-	list, errRedis := h.RedisClient.Get(ctx, fmt.Sprintf("%s", queries["short_url"])).Result()
+	result, errRedis := h.RedisClient.Get(ctx, fmt.Sprintf("%s", queries["short_url"])).Result()
 	if errRedis == nil {
-		errUnmarshal := json.Unmarshal([]byte(list), &record)
+		errUnmarshal := json.Unmarshal([]byte(result), &record)
 		if errUnmarshal != nil {
 			return nil, errUnmarshal
 		}
@@ -231,9 +231,10 @@ func main() {
 		RedisClient: redisClient,
 	}
 
-	http.HandleFunc("/generate-short-url", handler.generateShortUrlHandler)
-	http.HandleFunc("/", handler.redirectHandler)
+	mux := http.NewServeMux()
+	mux.Handle("/generate-short-url", Middleware(http.HandlerFunc(handler.generateShortUrlHandler)))
+	mux.Handle("/", Middleware(http.HandlerFunc(handler.redirectHandler)))
 
 	// Start the server
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	log.Fatal(http.ListenAndServe(":3000", mux))
 }
