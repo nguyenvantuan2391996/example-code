@@ -11,19 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aidarkhanov/nanoid/v2"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-)
-
-const (
-	Domain             = "http://localhost:3000/"
-	NumberOfCharacters = 7
-	MaxRetryGenerate   = 10
-	ExpiredHours       = 24
-	DefaultExpiredTime = 90 * 24 * time.Hour
-	PageNotFound       = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>404 Not Found</title><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css\"><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Arvo\"><style>.page_404{padding:40px 0;background:#fff;font-family:Arvo,serif}.page_404 img{width:100%}.four_zero_four_bg{background-image:url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);height:400px;background-position:center}.four_zero_four_bg h1{font-size:80px}.four_zero_four_bg h3{font-size:80px}.link_404{color:#fff!important;padding:10px 20px;background:#39ac31;margin:20px 0;display:inline-block}.contant_box_404{margin-top:-50px}</style></head><body><section class=\"page_404\"><div class=\"container\"><div class=\"row\"><div class=\"col-sm-12\"><div class=\"col-sm-10 col-sm-offset-1 text-center\"><div class=\"four_zero_four_bg\"><h1 class=\"text-center\">404</h1></div><div class=\"contant_box_404\"><h3 class=\"h2\">Look like you're lost</h3><p>the page you are looking for not avaible!</p><a href=\"\" class=\"link_404\">Go to Home</a></div></div></div></div></div></section></body></html>"
 )
 
 type HandlerAPI struct {
@@ -60,7 +50,7 @@ func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Requ
 	// Generate short link by using nanoid
 	shortLink := ""
 	for i := 0; i < MaxRetryGenerate; i++ {
-		tmp, errGenerate := generateURL()
+		tmp, errGenerate := GenerateURL()
 		if errGenerate != nil {
 			continue
 		}
@@ -167,18 +157,6 @@ func (h *HandlerAPI) GetURLByQueries(ctx context.Context, queries map[string]int
 	}
 
 	return record, nil
-}
-
-func generateURL() (string, error) {
-	alphabet := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	size := NumberOfCharacters
-
-	key, err := nanoid.GenerateString(alphabet, size)
-	if err != nil {
-		return "", err
-	}
-
-	return key, nil
 }
 
 func initDatabase() (*gorm.DB, error) {
