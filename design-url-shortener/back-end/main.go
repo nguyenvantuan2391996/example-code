@@ -17,6 +17,11 @@ import (
 )
 
 func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	// Read the body request
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -72,6 +77,11 @@ func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *HandlerAPI) redirectHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	longURL, err := h.GetURLByQueries(r.Context(), map[string]interface{}{
 		"short_url": Domain + strings.TrimLeft(r.RequestURI, "/"),
 	})
