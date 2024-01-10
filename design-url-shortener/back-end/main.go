@@ -16,22 +16,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type HandlerAPI struct {
-	DBClient    *gorm.DB
-	RedisClient *redis.Client
-}
-
-type RequestData struct {
-	URL string `json:"url"`
-}
-
-type URL struct {
-	ID          int
-	LongURL     string
-	ShortURL    string
-	ExpiredTime time.Time
-}
-
 func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Request) {
 	// Read the body request
 	body, err := ioutil.ReadAll(r.Body)
