@@ -14,7 +14,7 @@ import (
 func initRedis() (*redis.Client, error) {
 	var redisClient *redis.Client
 
-	opts, err := redis.ParseURL("redis://:@localhost:6384")
+	opts, err := redis.ParseURL("redis://default:admin123@localhost:6379")
 	if err != nil {
 		log.Fatal("failed to init redis:", err)
 		return nil, err
@@ -25,6 +25,7 @@ func initRedis() (*redis.Client, error) {
 	opts.ReadTimeout = 5 * time.Second
 	opts.WriteTimeout = 5 * time.Second
 	opts.IdleTimeout = 5 * time.Second
+	opts.Username = ""
 
 	redisClient = redis.NewClient(opts)
 
