@@ -34,7 +34,7 @@ func crawl(ch chan string, wg *sync.WaitGroup) {
 }
 
 func main() {
-	ch := make(chan string, 10)
+	ch := make(chan string, NumberOfWorkers)
 	var wg sync.WaitGroup
 
 	// push the url to channel
