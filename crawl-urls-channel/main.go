@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var (
+const (
 	NumberOfWorkers = 5
 )
 
