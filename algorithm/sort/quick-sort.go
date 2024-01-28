@@ -1,4 +1,4 @@
-package main
+package sort
 
 func partition(nums []int) ([]int, []int) {
 	curA, curB := -1, -1
