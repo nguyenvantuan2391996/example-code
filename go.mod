@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/aidarkhanov/nanoid/v2 v2.0.0-20210915221554-84fce99176fc
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang/mock v1.6.0
 	github.com/sirupsen/logrus v1.9.2
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/gorm v1.25.5
