@@ -63,6 +63,7 @@ func main() {
 				continue
 			}
 
+			time.Sleep(5 * time.Second)
 			fmt.Println(fmt.Sprintf("message: %v", message))
 		}
 	}()
