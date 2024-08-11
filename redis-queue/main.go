@@ -49,7 +49,7 @@ func main() {
 		return
 	}
 
-	ctx, queue := context.Background(), "test"
+	ctx, queue := context.Background(), "tuan"
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
