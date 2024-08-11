@@ -16,7 +16,7 @@ import (
 func initRedis() (*RedisClient, error) {
 	var redisClient *redis.Client
 
-	opts, err := redis.ParseURL("redis://default:@localhost:6279")
+	opts, err := redis.ParseURL("redis://default:@localhost:6379")
 	if err != nil {
 		log.Fatal("failed to init redis:", err)
 		return nil, err
@@ -64,7 +64,7 @@ func main() {
 		}()
 	}
 
-	subscriber := redisClient.Redis.Subscribe(ctx, channel)
+	subscriber := redisClient.Subscribe(ctx, channel)
 	go func() {
 		for {
 			message, err := subscriber.ReceiveMessage(ctx)
