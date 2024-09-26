@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+  <title>Google Docs Editor</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    li {
+      margin-left: 16px;
+    }
+
+    a {
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 991px;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .toolbar {
+      padding: 16px;
+      background: #eee;
+    }
+
+    .toolbar .head {
+      display: flex;
+      grid-gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar .head > input {
+      max-width: 100px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 2px solid #ddd;
+      outline: none;
+    }
+
+    .toolbar .head select {
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .toolbar .head .color {
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      grid-gap: 6px;
+      padding: 0 10px;
+    }
+
+    .toolbar .head .color span {
+      font-size: 14px;
+    }
+
+    .toolbar .head .color input {
+      border: none;
+      padding: 0;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .toolbar .head .color input::-moz-color-swatch {
+      width: 20px;
+      height: 20px;
+      border: none;
+      border-radius: 50%;
+    }
+
+    .toolbar .btn-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      grid-gap: 10px;
+    }
+
+    .toolbar .btn-toolbar button {
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .toolbar .btn-toolbar button:hover {
+      background: #f3f3f3;
+    }
+
+    #content {
+      padding: 16px;
+      outline: none;
+      max-height: 50vh;
+      overflow: auto;
+    }
+
+    #show-code[data-active="true"] {
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="toolbar">
+    <div class="head">
+      <label for="filename"></label><input type="text" placeholder="Filename" value="untitled" id="filename">
+      <label>
+        <select onchange="fileHandle(this.value); this.selectedIndex=0">
+          <option value="" selected="" hidden="" disabled="">File</option>
+          <option value="new">New file</option>
+          <option value="txt">Save as txt</option>
+          <option value="pdf">Save as pdf</option>
+        </select>
+      </label>
+      <label>
+        <select onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;">
+          <option value="" selected="" hidden="" disabled="">Format</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+          <option value="h4">Heading 4</option>
+          <option value="h5">Heading 5</option>
+          <option value="h6">Heading 6</option>
+          <option value="p">Paragraph</option>
+        </select>
+      </label>
+      <label>
+        <select onchange="formatDoc('fontSize', this.value); this.selectedIndex=0;">
+          <option value="" selected="" hidden="" disabled="">Font size</option>
+          <option value="1">Extra small</option>
+          <option value="2">Small</option>
+          <option value="3">Regular</option>
+          <option value="4">Medium</option>
+          <option value="5">Large</option>
+          <option value="6">Extra Large</option>
+          <option value="7">Big</option>
+        </select>
+      </label>
+      <div class="color">
+        <span>Color</span>
+        <label>
+          <input type="color" oninput="formatDoc('foreColor', this.value); this.value='#000000';">
+        </label>
+      </div>
+      <div class="color">
+        <span>Background</span>
+        <label>
+          <input type="color" oninput="formatDoc('hiliteColor', this.value); this.value='#000000';">
+        </label>
+      </div>
+    </div>
+    <div class="btn-toolbar">
+      <button onclick="formatDoc('undo')"><i class='bx bx-undo' ></i></button>
+      <button onclick="formatDoc('redo')"><i class='bx bx-redo' ></i></button>
+      <button onclick="formatDoc('bold')"><i class='bx bx-bold'></i></button>
+      <button onclick="formatDoc('underline')"><i class='bx bx-underline' ></i></button>
+      <button onclick="formatDoc('italic')"><i class='bx bx-italic' ></i></button>
+      <button onclick="formatDoc('strikeThrough')"><i class='bx bx-strikethrough' ></i></button>
+      <button onclick="formatDoc('justifyLeft')"><i class='bx bx-align-left' ></i></button>
+      <button onclick="formatDoc('justifyCenter')"><i class='bx bx-align-middle' ></i></button>
+      <button onclick="formatDoc('justifyRight')"><i class='bx bx-align-right' ></i></button>
+      <button onclick="formatDoc('justifyFull')"><i class='bx bx-align-justify' ></i></button>
+      <button onclick="formatDoc('insertOrderedList')"><i class='bx bx-list-ol' ></i></button>
+      <button onclick="formatDoc('insertUnorderedList')"><i class='bx bx-list-ul' ></i></button>
+      <button onclick="addLink()"><i class='bx bx-link' ></i></button>
+      <button onclick="formatDoc('unlink')"><i class='bx bx-unlink' ></i></button>
+      <button id="show-code" data-active="false">&lt;/&gt;</button>
+    </div>
+  </div>
+  <div id="content" contenteditable="true" spellcheck="false">
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  let ws;
+
+  if (window.WebSocket === undefined) {
+    console.log("Your browser does not support WebSockets")
+  } else {
+    ws = initWS();
+  }
+
+  function initWS() {
+    let socket = new WebSocket("ws://" + window.location.host + "/ws" + window.location.search)
+
+    socket.onopen = function() {
+      console.log("Socket is open")
+    };
+
+    // receive data from server
+    socket.onmessage = function (e) {
+      document.getElementById("content").innerHTML = JSON.parse(e.data).data
+    }
+
+    // close socket
+    socket.onclose = function () {
+      console.log("Socket closed")
+    }
+
+    return socket;
+  }
+
+  // api save data
+  async function saveData() {
+    const formData = new FormData();
+    formData.append("channel", window.location.search.split("=")[1]);
+    formData.append("data", document.getElementById("content").innerHTML);
+
+    const requestOptions = {
+      method: "POST",
+      body: formData,
+      redirect: "follow"
+    };
+
+    await fetch("http://" + window.location.host + "/save", requestOptions)
+            .then((response) => response.text())
+            .then((result) => console.log(result))
+            .catch((error) => console.error(error));
+  }
+
+  // onchange text editor to save data
+  const div = document.getElementById('content');
+  let timeout;
+  div.addEventListener('input', function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(async function () {
+      await saveData()
+    }, 5000)
+  })
+
+  // process editor
+  function formatDoc(cmd, value=null) {
+    if(value) {
+      document.execCommand(cmd, false, value);
+    } else {
+      document.execCommand(cmd);
+    }
+  }
+
+  function addLink() {
+    const url = prompt('Insert url');
+    formatDoc('createLink', url);
+  }
+
+  const content = document.getElementById('content');
+
+  content.addEventListener('mouseenter', function () {
+    const a = content.querySelectorAll('a');
+    a.forEach(item=> {
+      item.addEventListener('mouseenter', function () {
+        content.setAttribute('contenteditable', false);
+        item.target = '_blank';
+      })
+      item.addEventListener('mouseleave', function () {
+        content.setAttribute('contenteditable', true);
+      })
+    })
+  })
+
+  const showCode = document.getElementById('show-code');
+  let active = false;
+
+  showCode.addEventListener('click', function () {
+    showCode.dataset.active = !active;
+    active = !active
+    if(active) {
+      content.textContent = content.innerHTML;
+      content.setAttribute('contenteditable', false);
+    } else {
+      content.innerHTML = content.textContent;
+      content.setAttribute('contenteditable', true);
+    }
+  })
+
+  const filename = document.getElementById('filename');
+
+  function fileHandle(value) {
+    if(value === 'new') {
+      content.innerHTML = '';
+      filename.value = 'untitled';
+    } else if(value === 'txt') {
+      const blob = new Blob([content.innerText])
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${filename.value}.txt`;
+      link.click();
+    } else if(value === 'pdf') {
+      html2pdf(content).save(filename.value);
+    }
+  }
+</script>
+</body>
+</html>
