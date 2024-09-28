@@ -220,7 +220,9 @@
   }
 
   function initWS() {
-    let socket = new WebSocket("ws://" + window.location.host + "/ws" + window.location.search)
+    let uuid = self.crypto.randomUUID()
+    localStorage.setItem("uuid", uuid)
+    let socket = new WebSocket("ws://" + window.location.host + "/ws" + window.location.search + "&uuid=" + uuid)
 
     socket.onopen = function() {
       console.log("Socket is open")
@@ -243,6 +245,7 @@
   async function saveData() {
     const formData = new FormData();
     formData.append("channel", window.location.search.split("=")[1]);
+    formData.append("uuid", localStorage.getItem("uuid"));
     formData.append("data", document.getElementById("content").innerHTML);
 
     const requestOptions = {
@@ -264,7 +267,7 @@
     clearTimeout(timeout);
     timeout = setTimeout(async function () {
       await saveData()
-    }, 5000)
+    }, 500)
   })
 
   // process editor
