@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-  <title>Google Docs Editor</title>
+  <title>Docs Editor</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -220,11 +220,14 @@
   }
 
   function initWS() {
+    // close ws before init new ws
+    closeWs(localStorage.getItem("uuid"))
+
     let uuid = self.crypto.randomUUID()
     localStorage.setItem("uuid", uuid)
     let socket = new WebSocket("ws://" + window.location.host + "/ws" + window.location.search + "&uuid=" + uuid)
 
-    socket.onopen = function() {
+    socket.onopen = function () {
       console.log("Socket is open")
     };
 
@@ -236,6 +239,7 @@
     // close socket
     socket.onclose = function () {
       console.log("Socket closed")
+      closeWs(localStorage.getItem("uuid"))
     }
 
     return socket;
@@ -255,6 +259,30 @@
     };
 
     await fetch("http://" + window.location.host + "/save", requestOptions)
+            .then((response) => response.text())
+            .then((result) => console.log(result))
+            .catch((error) => console.error(error));
+  }
+
+  // api close ws
+  async function closeWs(uuid) {
+    const formData = new FormData();
+
+    if (!!!uuid) {
+      console.log("uuid is not found")
+      return
+    }
+
+    formData.append("channel", window.location.search.split("=")[1]);
+    formData.append("uuid", uuid);
+
+    const requestOptions = {
+      method: "POST",
+      body: formData,
+      redirect: "follow"
+    };
+
+    await fetch("http://" + window.location.host + "/ws/close", requestOptions)
             .then((response) => response.text())
             .then((result) => console.log(result))
             .catch((error) => console.error(error));

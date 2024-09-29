@@ -19,6 +19,7 @@ var mapWsConn = make(map[string]map[string]*websocket.Conn)
 func main() {
 	http.HandleFunc("/index", LoadPage)
 	http.HandleFunc("/ws", InitWebsocket)
+	http.HandleFunc("/ws/close", CloseWebsocket)
 	http.HandleFunc("/save", SaveData)
 
 	log.Fatal(http.ListenAndServe(":3000", nil))
@@ -33,7 +34,7 @@ func LoadPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content, err := os.ReadFile(path + "/google-docs-using-websocket/index.html")
+	content, err := os.ReadFile(path + "/docs-editor-using-websocket/index.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -68,6 +69,37 @@ func InitWebsocket(w http.ResponseWriter, r *http.Request) {
 	mapWsConn[channel][uuid] = conn
 }
 
+func CloseWebsocket(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	channel := r.FormValue("channel")
+	uuid := r.FormValue("uuid")
+
+	if _, ok := mapWsConn[channel]; !ok {
+		http.Error(w, "the channel is not found", http.StatusInternalServerError)
+		return
+	}
+
+	if _, ok := mapWsConn[channel][uuid]; !ok {
+		http.Error(w, "the uuid is not found", http.StatusInternalServerError)
+		return
+	}
+
+	err := mapWsConn[channel][uuid].Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	delete(mapWsConn[channel], uuid)
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write([]byte("success"))
+	if err != nil {
+		return
+	}
+}
+
 func SaveData(w http.ResponseWriter, r *http.Request) {
 	channel := r.FormValue("channel")
 	uuid := r.FormValue("uuid")
@@ -75,6 +107,7 @@ func SaveData(w http.ResponseWriter, r *http.Request) {
 
 	if _, ok := mapWsConn[channel]; !ok {
 		http.Error(w, "the channel is not found", http.StatusInternalServerError)
+		return
 	}
 
 	for key, ws := range mapWsConn[channel] {
@@ -82,10 +115,9 @@ func SaveData(w http.ResponseWriter, r *http.Request) {
 			err := ws.WriteJSON(map[string]interface{}{
 				"data": data,
 			})
-			fmt.Println(websocket.IsCloseError(err))
-			fmt.Println(websocket.IsUnexpectedCloseError(err))
+
 			if err != nil {
-				return
+				continue
 			}
 		}
 	}
