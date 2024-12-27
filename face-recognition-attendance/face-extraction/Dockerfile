@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 
+RUN pip install --upgrade pip setuptools
+
 WORKDIR /app
 
 RUN pip install --no-cache-dir --upgrade pip
