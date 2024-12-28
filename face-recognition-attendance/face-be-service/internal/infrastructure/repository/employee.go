@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"face-be-service/common/constants"
+	"github.com/spf13/viper"
 	"gorm.io/gorm"
 
 	"face-be-service/common/database/entities"
@@ -34,8 +36,8 @@ func (ar *EmployeeRepository) GetTopByDistanceType(ctx context.Context, distance
 	query := fmt.Sprintf(`
 		SELECT id, employee_id, employee_name, image_path
 		FROM employees
-		ORDER BY embedding %v '%v'
-		LIMIT 1`, distanceType, vector)
+		ORDER BY embedding %v '%v >= %v'
+		LIMIT 1`, distanceType, vector, viper.GetFloat64(constants.Threshold))
 
 	err = ar.db.Raw(query).Scan(&record).Error
 	if err != nil {

@@ -16,3 +16,7 @@ const (
 const (
 	APIKey = "API_KEY"
 )
+
+const (
+	Threshold = "THRESHOLD"
+)
