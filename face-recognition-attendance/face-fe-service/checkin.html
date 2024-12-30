@@ -82,6 +82,7 @@
       await Delay(500)
 
       captureImage()
+      await sendImageToAPI()
     } else {
       statusText.textContent = "No face detected.";
       statusText.classList.add("text-red-500");
@@ -96,17 +97,17 @@
     // Convert canvas to Blob (image file)
     canvas.toBlob(async (blob) => {
       const formData = new FormData();
-      formData.append('file', blob, 'image.png'); // Append the image as 'file'
+      formData.append('image', blob, 'image.png'); // Append the image as 'file'
 
       try {
-        const response = await fetch('https://example.com/api/upload', {
+        const response = await fetch('http://0.0.0.0:8502/api/v1/employees/search', {
           method: 'POST',
           body: formData,
         });
 
         if (response.ok) {
           const date = new Date();
-          document.getElementById("employee-name").textContent = "tuan";
+          document.getElementById("employee-name").textContent = response.employee_id;
           document.getElementById("time").textContent = date.toDateString();
           document.getElementById("checkin-status").textContent = "Success";
         } else {

@@ -68,16 +68,18 @@
         // Convert canvas to Blob (image file)
         canvas.toBlob(async (blob) => {
             const formData = new FormData();
-            formData.append('file', blob, 'image.png'); // Append the image as 'file'
+            formData.append('image', blob, 'image.png');
+            formData.append('employee_id', document.getElementById("employee-id").value);
+            formData.append('employee_name', document.getElementById("employee-name").value);
 
             try {
-                const response = await fetch('https://example.com/api/upload', {
+                const response = await fetch('http://0.0.0.0:8502/api/v1/employees/insert', {
                     method: 'POST',
                     body: formData,
                 });
 
                 if (response.ok) {
-                    alert('Image sent successfully!');
+                    alert('Successfully!');
                 } else {
                     alert('Error sending image: ' + response.statusText);
                 }
@@ -89,7 +91,7 @@
 
 
     // Capture image from video feed
-    function captureImage() {
+    async function captureImage() {
         const video = document.getElementById('webcam');
         const canvas = document.getElementById('snapshotCanvas');
         const context = canvas.getContext('2d');
@@ -99,6 +101,8 @@
 
         // Show captured image
         document.getElementById('captureResult').classList.remove('hidden');
+
+        await sendImageToAPI()
     }
 
     // Initialize on Page Load
@@ -107,7 +111,7 @@
     });
 
     // Capture button event
-    captureBtn.addEventListener('click', captureImage);
+    captureBtn.addEventListener('click', await captureImage);
 </script>
 
 </body>
