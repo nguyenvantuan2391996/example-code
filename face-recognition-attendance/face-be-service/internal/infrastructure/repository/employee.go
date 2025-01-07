@@ -36,7 +36,7 @@ func (ar *EmployeeRepository) GetTopByDistanceType(ctx context.Context, distance
 	query := fmt.Sprintf(`
 		SELECT id, employee_id, employee_name, image_path
 		FROM employees
-		ORDER BY embedding %v '%v >= %v'
+		ORDER BY embedding %v '%v' >= %v
 		LIMIT 1`, distanceType, vector, viper.GetFloat64(constants.Threshold))
 
 	err = ar.db.Raw(query).Scan(&record).Error
