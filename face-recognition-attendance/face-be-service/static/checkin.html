@@ -79,6 +79,10 @@
       statusText.classList.add("text-green-500");
       statusText.classList.remove("text-red-500");
 
+      document.getElementById("employee-name").textContent = "";
+      document.getElementById("time").textContent = "";
+      document.getElementById("checkin-status").textContent = "Checking...";
+
       captureImage()
       await sendImageToAPI()
     } else {
