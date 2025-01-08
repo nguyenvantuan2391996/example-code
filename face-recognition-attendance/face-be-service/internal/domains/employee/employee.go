@@ -84,10 +84,22 @@ func (es *Employee) Search(ctx context.Context, input *models.ImageSearchInput) 
 		return nil, err
 	}
 
-	employee, err := es.employeeRepo.GetTopByDistanceType(ctx, constants.CosineDistance, extraction.Vector)
+	if extraction.Vector == nil {
+		return map[string]interface{}{
+			"employee_name": "Unknown",
+		}, nil
+	}
+
+	employee, err := es.employeeRepo.GetTopByDistanceType(ctx, constants.EuclideanDistance, extraction.Vector)
 	if err != nil {
 		logrus.Errorf(constants.FormatTaskErr, "GetTopByDistanceType", err)
 		return nil, err
+	}
+
+	if employee == nil {
+		return map[string]interface{}{
+			"employee_name": "Unknown",
+		}, nil
 	}
 
 	return map[string]interface{}{

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Enroll</title>
+    <script defer src="./static/face-api.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen">
+<!-- Camera Section -->
+<div class="flex-1 flex justify-center items-center">
+    <video id="webcam" autoplay muted playsinline class="object-cover"></video>
+</div>
+
+<!-- User Information Section -->
+<div class="flex-1 rounded-t-2xl shadow-xl p-6">
+    <h2 class="text-2xl font-bold text-gray-800 text-center">Thông Tin Nhân Viên</h2>
+
+    <div class="mt-6 space-y-4">
+        <div class="flex items-center">
+            <span class="w-1/3 text-gray-600 font-medium">Mã Nhân Viên:</span>
+            <label>
+                <input type="text" id="employee-id" class="w-2/3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </label>
+        </div>
+
+        <div class="flex items-center">
+            <span class="w-1/3 text-gray-600 font-medium">Tên:</span>
+            <label>
+                <input type="text" id="employee-name" class="w-2/3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </label>
+        </div>
+
+        <div id="captureResult" class="flex items-center hidden flex flex-col items-center">
+            <canvas id="snapshotCanvas" class="w-20 h-20 rounded-full border-4 border-blue-500 shadow"></canvas>
+        </div>
+    </div>
+
+    <!-- Capture Button -->
+    <div class="mt-6 flex justify-center">
+        <button
+                id="captureBtn"
+                class="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 focus:ring-4 focus:ring-blue-300">
+            Capture Image
+        </button>
+    </div>
+</div>
+
+
+<script>
+    const video = document.getElementById('webcam');
+    const captureBtn = document.getElementById('captureBtn');
+
+    // Start Webcam
+    async function startWebcam() {
+        try {
+            video.srcObject = await navigator.mediaDevices.getUserMedia({video: true});
+        } catch (error) {
+            console.error("Error accessing webcam:", error);
+        }
+    }
+
+    // Send image to API
+    async function sendImageToAPI() {
+        const canvas = document.getElementById('snapshotCanvas');
+
+        // Convert canvas to Blob (image file)
+        canvas.toBlob(async (blob) => {
+            const myHeaders = new Headers();
+            myHeaders.append("X-API-Key", "c3kvxLTTVaAF5aQU2BHRBnaI7kFvVzt3aJSZfUav6RzmKM6cBN");
+
+            const formData = new FormData();
+            formData.append('image', blob, 'image.png');
+            formData.append('employee_id', document.getElementById("employee-id").value);
+            formData.append('employee_name', document.getElementById("employee-name").value);
+
+            try {
+                const response = await fetch('https://10.124.67.6:8502/api/v1/employees/insert', {
+                    method: 'POST',
+                    body: formData,
+                    headers: myHeaders,
+                });
+
+                if (response.ok) {
+                    alert('Successfully!');
+                } else {
+                    alert('Error sending image: ' + response.statusText);
+                }
+            } catch (err) {
+                alert('Failed to send image: ' + err.message);
+            }
+        }, 'image/png');
+    }
+
+    // Capture image from video feed
+    async function captureImage() {
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('snapshotCanvas');
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Show captured image
+        document.getElementById('captureResult').classList.remove('hidden');
+
+        await sendImageToAPI()
+    }
+
+    // Initialize on Page Load
+    window.addEventListener('DOMContentLoaded', async () => {
+        await startWebcam();
+    });
+
+    // Capture button event
+    captureBtn.addEventListener('click', async () => {
+        await captureImage();
+    });
+</script>
+
+</body>
+</html>

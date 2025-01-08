@@ -1,7 +1,7 @@
 package constants
 
 const (
-	EuclideanDistance    = "<->"
+	EuclideanDistance    = "<=>"
 	CosineDistance       = "<#>"
-	InnerProductDistance = "<=>"
+	InnerProductDistance = "<->"
 )

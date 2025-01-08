@@ -155,6 +155,16 @@ func main() {
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 	r.Use(middlewares.Recover())
 
+	r.Static("/static", "./static")
+
+	r.GET("/checkin", func(c *gin.Context) {
+		c.File("./static/checkin.html")
+	})
+
+	r.GET("/enroll", func(c *gin.Context) {
+		c.File("./static/enroll.html")
+	})
+
 	// employee APIs
 	employeeAPI := r.Group("api/v1/employees")
 	{
@@ -165,7 +175,7 @@ func main() {
 		employeeAPI.POST("search", h.Search)
 	}
 
-	err = r.Run(":" + viper.GetString("PORT"))
+	err = r.RunTLS(":"+viper.GetString("PORT"), "server.crt", "server.key")
 	if err != nil {
 		return
 	}
