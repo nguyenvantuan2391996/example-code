@@ -75,21 +75,25 @@
             formData.append('employee_id', document.getElementById("employee-id").value);
             formData.append('employee_name', document.getElementById("employee-name").value);
 
-            try {
-                const response = await fetch('https://10.124.67.6:8502/api/v1/employees/insert', {
-                    method: 'POST',
-                    body: formData,
-                    headers: myHeaders,
-                });
+            const requestOptions = {
+                method: 'POST',
+                body: formData,
+                headers: myHeaders,
+                redirect: "follow"
+            };
 
-                if (response.ok) {
+            await fetch('https://10.124.67.6:8502/api/v1/employees/insert', requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    if (!!result.error) {
+                        alert('Error enroll: ' + result.error);
+                        return
+                    }
                     alert('Successfully!');
-                } else {
-                    alert('Error sending image: ' + response.statusText);
-                }
-            } catch (err) {
-                alert('Failed to send image: ' + err.message);
-            }
+                })
+                .catch((error) => {
+                    alert('Error enroll: ' + error.message);
+                });
         }, 'image/png');
     }
 

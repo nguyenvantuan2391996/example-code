@@ -41,6 +41,17 @@ func (es *Employee) Insert(ctx context.Context, input *models.ImageInsertInput) 
 		return nil, err
 	}
 
+	// search
+	employee, err := es.employeeRepo.GetTopByDistanceType(ctx, constants.EuclideanDistance, extraction.Vector)
+	if err != nil {
+		logrus.Errorf(constants.FormatTaskErr, "GetTopByDistanceType", err)
+		return nil, err
+	}
+
+	if employee != nil && employee.EmployeeID != input.EmployeeID {
+		return nil, fmt.Errorf("employee id is invalid")
+	}
+
 	// seek file
 	_, err = input.ImageFile.Seek(0, 0)
 	if err != nil {

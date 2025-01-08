@@ -20,13 +20,17 @@ func (h *Handler) Insert(ctx *gin.Context) {
 	err := ctx.ShouldBind(&request)
 	if err != nil {
 		logrus.Warnf(constants.FormatTaskErr, "ShouldBind", err)
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
 	if err = request.Validate(); err != nil {
 		logrus.Errorf(constants.FormatTaskErr, "Validate", err)
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
@@ -37,7 +41,9 @@ func (h *Handler) Insert(ctx *gin.Context) {
 
 	if err != nil {
 		logrus.Warnf(constants.FormatTaskErr, "request.Image.Open", err)
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
@@ -45,7 +51,9 @@ func (h *Handler) Insert(ctx *gin.Context) {
 		request.Image.Size))
 	if err != nil {
 		logrus.Errorf(constants.FormatTaskErr, "Insert", err)
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
@@ -59,13 +67,17 @@ func (h *Handler) Search(ctx *gin.Context) {
 	err := ctx.ShouldBind(&request)
 	if err != nil {
 		logrus.Warnf(constants.FormatTaskErr, "ShouldBind", err)
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
 	if err = request.Validate(); err != nil {
 		logrus.Errorf(constants.FormatTaskErr, "Validate", err)
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
@@ -76,7 +88,9 @@ func (h *Handler) Search(ctx *gin.Context) {
 
 	if err != nil {
 		logrus.Warnf(constants.FormatTaskErr, "request.Image.Open", err)
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
@@ -84,7 +98,9 @@ func (h *Handler) Search(ctx *gin.Context) {
 		request.Image.Size))
 	if err != nil {
 		logrus.Errorf(constants.FormatTaskErr, "Search", err)
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
