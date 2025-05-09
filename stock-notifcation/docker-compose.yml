@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  notify-app:
+    image: notify-app
+    restart: always
+    volumes:
+      - ./.env:/app/.env
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
