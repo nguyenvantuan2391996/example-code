@@ -9,9 +9,9 @@ services:
       - REDIS_ADDR=0.0.0.0:6379
       - REDIS_PASSWORD=
     networks:
-      - internal
+      - backend
 
 networks:
-  internal:
-    driver: bridge
+  backend:
+   external: true
 
