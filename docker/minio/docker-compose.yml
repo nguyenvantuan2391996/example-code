@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: ocr-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    restart: always
+    environment:
+      - MINIO_ACCESS_KEY=admin
+      - MINIO_SECRET_KEY=admin123
+    volumes:
+      - /ocr/minio-data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - backend
+
+networks:
+  backend:
+   external: true
