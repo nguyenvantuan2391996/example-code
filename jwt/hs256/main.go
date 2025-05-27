@@ -20,7 +20,7 @@ func GenerateJWT(userID string) (string, error) {
 		"exp":        time.Now().Add(time.Second * time.Duration(JWTExpirationSeconds)).Unix(),
 		"token_type": "access",
 		"user_id":    17,
-		"username":   "eunjlboihj21vvle",
+		"username":   "test",
 		"role":       "normal",
 		"jti":        uuid.NewString(),
 	}
