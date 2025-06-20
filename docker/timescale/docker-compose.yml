@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  timescaledb:
+    image: timescale/timescaledb-ha:pg16
+    container_name: timescaledb
+    restart: always
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: test
+    volumes:
+      - ./timescale_data:/var/lib/postgresql/data
+    networks:
+      - database_backend
+
+networks:
+  database_backend:
+    external: true
+
