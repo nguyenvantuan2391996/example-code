@@ -44,7 +44,10 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Chunk uploaded successfully"))
+	_, err = w.Write([]byte("Chunk uploaded successfully"))
+	if err != nil {
+		return
+	}
 }
 
 func main() {
