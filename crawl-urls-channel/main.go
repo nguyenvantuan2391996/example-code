@@ -11,13 +11,13 @@ const (
 )
 
 func processUrl(url string) {
-	fmt.Println(fmt.Sprintf("url %v", url))
+	fmt.Printf("url %v", url)
 
 	// processing
 	time.Sleep(5 * time.Second)
 
 	// done
-	fmt.Println(fmt.Sprintf("url %v is done", url))
+	fmt.Printf("url %v is done", url)
 }
 
 func crawl(ch chan string, wg *sync.WaitGroup) {
@@ -28,7 +28,6 @@ func crawl(ch chan string, wg *sync.WaitGroup) {
 			for url := range ch {
 				processUrl(url)
 			}
-			return
 		}()
 	}
 }

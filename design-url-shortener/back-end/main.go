@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -23,7 +23,7 @@ func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Read the body request
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Error reading request body", http.StatusBadRequest)
 		return
@@ -70,7 +70,7 @@ func (h *HandlerAPI) generateShortUrlHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	w.WriteHeader(http.StatusOK)
-	_, err = fmt.Fprintf(w, shortLink)
+	_, err = fmt.Fprintf(w, "%v", shortLink)
 	if err != nil {
 		return
 	}

@@ -45,7 +45,7 @@ func main() {
 
 		mux := asynq.NewServeMux()
 		mux.HandleFunc("hihi", func(ctx context.Context, task *asynq.Task) error {
-			fmt.Println(fmt.Sprintf("hihi: %s", task.Payload()))
+			fmt.Printf("hihi: %s", task.Payload())
 			return nil
 		})
 

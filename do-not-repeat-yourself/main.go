@@ -40,18 +40,18 @@ func main() {
 	fmt.Println(strings.Contains("Tuan Nguyen", "tu"))
 
 	// Sử dụng biến và hằng số
-	time.Now().AddDate(0, 1, 1)
-	time.Now().AddDate(0, 0, NumberOfDaysAdditional)
-
-	// Sử dụng kỹ thuật tái sử dụng
+	fmt.Println(time.Now().AddDate(0, 1, 1))
+	fmt.Println(time.Now().AddDate(0, 0, NumberOfDaysAdditional))
 }
 
 func GetElementRandomFromArray(arr []string) string {
-	rand.Seed(time.Now().UnixNano())
-	min := 0
-	max := len(arr) - 1
+	src := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(src)
 
-	return arr[rand.Intn(max-min+1)+min]
+	minValue := 0
+	maxvalue := len(arr) - 1
+
+	return arr[r.Intn(maxvalue-minValue+1)+minValue]
 }
 
 func GetInformationFromUserService(id int) *User {

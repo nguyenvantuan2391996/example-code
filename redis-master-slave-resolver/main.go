@@ -32,14 +32,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(fmt.Sprintf("from master %v", m))
+	fmt.Printf("from master %v", m)
 
 	// read from slave
 	s, err := redisResolver.Clauses(Slave).Get(ctx, key)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(fmt.Sprintf("from slave %v", s))
+	fmt.Printf("from slave %v", s)
 
 	// error slave write
 	_, err = redisResolver.Clauses(Slave).Set(ctx, key, "hello", 10)

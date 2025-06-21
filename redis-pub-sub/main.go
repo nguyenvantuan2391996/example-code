@@ -52,7 +52,7 @@ func main() {
 	ctx, channel := context.Background(), "test"
 	ch := make(chan string, 1)
 	numberOfWorkers := 5
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	// 5 workers
