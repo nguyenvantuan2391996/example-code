@@ -4,10 +4,13 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"image"
+	"image/jpeg"
 	"io"
 	"mime/multipart"
 	"strings"
 
+	"github.com/nfnt/resize"
 	"github.com/sirupsen/logrus"
 )
 
@@ -66,4 +69,43 @@ func CalcBase64LengthInByte(imgBase64 string) int64 {
 	// so orig length ==  (l*6 - eq*2) / 8
 
 	return int64((l*3 - eq) / 4)
+}
+
+func DownsizeBase64Image(input string) (string, error) {
+	data, err := base64.StdEncoding.DecodeString(input)
+	if err != nil {
+		return "", err
+	}
+
+	img, _, err := image.Decode(bytes.NewReader(data))
+	if err != nil {
+		return "", err
+	}
+
+	resized := resize.Resize(0, uint(img.Bounds().Dy()/2), img, resize.Lanczos3)
+
+	var buf bytes.Buffer
+	err = jpeg.Encode(&buf, resized, &jpeg.Options{Quality: 70})
+	if err != nil {
+		return "", err
+	}
+
+	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
+}
+
+func DownsizeImage(data []byte) ([]byte, error) {
+	img, _, err := image.Decode(bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+
+	resized := resize.Resize(0, uint(img.Bounds().Dy()/2), img, resize.Lanczos3)
+
+	var buf bytes.Buffer
+	err = jpeg.Encode(&buf, resized, &jpeg.Options{Quality: 70})
+	if err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
 }
