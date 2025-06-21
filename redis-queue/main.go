@@ -50,7 +50,7 @@ func main() {
 	}
 
 	ctx, queue := context.Background(), "tuan"
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	// the worker consumes queue
@@ -64,7 +64,7 @@ func main() {
 			}
 
 			time.Sleep(5 * time.Second)
-			fmt.Println(fmt.Sprintf("message: %v", message))
+			fmt.Printf("message: %v", message)
 		}
 	}()
 

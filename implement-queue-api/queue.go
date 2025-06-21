@@ -33,10 +33,8 @@ func (q *Queue) Dequeue() {
 			defer q.WaitGroup.Done()
 			for msg := range q.Channel {
 				time.Sleep(5 * time.Second)
-				fmt.Println(fmt.Sprintf("handle message %v", msg))
+				fmt.Printf("handle message %v", msg)
 			}
-
-			return
 		}()
 	}
 }

@@ -56,9 +56,9 @@ func main() {
 		}
 	}
 
-	fmt.Println(fmt.Sprintf("Top n: %v", topN))
+	fmt.Printf("Top n: %v", topN)
 
-	fmt.Println(fmt.Sprintf("KNN is predict %v is %v", target, mostFrequentValue))
+	fmt.Printf("KNN is predict %v is %v", target, mostFrequentValue)
 }
 
 var Points = map[float64]string{
