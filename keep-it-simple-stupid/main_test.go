@@ -8,8 +8,8 @@ func Test_getMonthKiss(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		args args
 		want string
+		args args
 	}{
 		{
 			name: "Jan",
@@ -32,8 +32,8 @@ func Test_getMonth(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		args args
 		want string
+		args args
 	}{
 		{
 			name: "Jan",

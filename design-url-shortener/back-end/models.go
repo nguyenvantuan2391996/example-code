@@ -17,8 +17,8 @@ type RequestData struct {
 }
 
 type URL struct {
-	ID          int
+	ExpiredTime time.Time
 	LongURL     string
 	ShortURL    string
-	ExpiredTime time.Time
+	ID          int
 }

@@ -8,13 +8,13 @@ import (
 )
 
 type User struct {
-	ID   int
 	Name string
+	ID   int
 }
 
 type Product struct {
-	ID          int
 	ProductName string
+	ID          int
 }
 
 const (
