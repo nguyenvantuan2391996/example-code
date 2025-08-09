@@ -3,8 +3,6 @@ package teams
 import (
 	"testing"
 
-	"faceid_golang_common/constants"
-
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,9 +12,9 @@ const (
 )
 
 func TestWebhookTeamsClient_SendMessage(t *testing.T) {
-	viper.Set(constants.VBD__INCOMING_WEBHOOK_URL, webhookURL)
+	viper.Set("WEBHOOK_URL", webhookURL)
 
-	NewWebhookTeamsClient(viper.GetString(constants.VBD__INCOMING_WEBHOOK_URL))
+	NewWebhookTeamsClient(viper.GetString("WEBHOOK_URL"))
 
 	instance := GetInstance()
 
@@ -46,9 +44,9 @@ func TestWebhookTeamsClient_SendMessage(t *testing.T) {
 }
 
 func TestWebhookTeamsClient_SendMessageV2(t *testing.T) {
-	viper.Set(constants.VBD__INCOMING_WEBHOOK_URL, webhookURL)
+	viper.Set("WEBHOOK_URL", webhookURL)
 
-	NewWebhookTeamsClient(viper.GetString(constants.VBD__INCOMING_WEBHOOK_URL))
+	NewWebhookTeamsClient(viper.GetString("WEBHOOK_URL"))
 
 	instance := GetInstance()
 

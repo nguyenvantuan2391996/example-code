@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
@@ -43,7 +42,7 @@ func sendMessage(webhook string, message *SlackMessage) error {
 	}(res.Body)
 	if res.StatusCode != http.StatusOK {
 		if res != nil {
-			bodyBytes, err := ioutil.ReadAll(res.Body)
+			bodyBytes, err := io.ReadAll(res.Body)
 			if err != nil {
 				logrus.Warnf("response %v", string(bodyBytes))
 				return err
