@@ -12,14 +12,14 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+	"go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/semconv/v1.21.0"
 )
 
-var tp *sdktrace.TracerProvider
+var tp *trace.TracerProvider
 var tExp *otlptrace.Exporter
 
-func GetInstance() *sdktrace.TracerProvider {
+func GetInstance() *trace.TracerProvider {
 	return tp
 }
 
@@ -57,11 +57,11 @@ func NewTracerProvider(grpcHost string, serviceName, namespace string) error {
 	if err != nil {
 		return err
 	}
-	bsp := sdktrace.NewBatchSpanProcessor(tExp)
-	tp = sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
-		sdktrace.WithResource(res),
-		sdktrace.WithSpanProcessor(bsp),
+	bsp := trace.NewBatchSpanProcessor(tExp)
+	tp = trace.NewTracerProvider(
+		trace.WithSampler(trace.AlwaysSample()),
+		trace.WithResource(res),
+		trace.WithSpanProcessor(bsp),
 	)
 
 	otel.SetTextMapPropagator(propagation.TraceContext{})

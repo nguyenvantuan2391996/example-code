@@ -10,9 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"faceid_golang_common/constants"
-	"faceid_golang_common/logger"
-	"faceid_golang_common/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var webhookTeamsClient *WebhookTeamsClient
@@ -37,7 +35,7 @@ func NewWebhookTeamsClient(webhookURL string) {
 		webhookURL: webhookURL,
 	}
 
-	logger.GetInstance().GetLogger().Info("completed initializing incoming webhook teams")
+	logrus.Info("completed initializing incoming webhook teams")
 }
 
 func GetInstance() *WebhookTeamsClient {
@@ -76,12 +74,12 @@ func (w *WebhookTeamsClient) Send(templateMsg *TemplateTeamsMessage) error {
 	if err != nil {
 		return err
 	}
-	webhookTeamsReq.Header.Add(constants.ContentTypeHeader, constants.ContentTypeJSON)
+	webhookTeamsReq.Header.Add("Content-Type", "application/json")
 
 	resp, err := w.client.Do(webhookTeamsReq)
 	if resp != nil {
 		defer func(body io.ReadCloser) {
-			utils.CloseResponse(body)
+			CloseResponse(body)
 		}(resp.Body)
 	}
 
@@ -93,8 +91,7 @@ func (w *WebhookTeamsClient) Send(templateMsg *TemplateTeamsMessage) error {
 		return fmt.Errorf("failed send teams message")
 	}
 
-	logger.GetInstance().GetLogger().Info(
-		fmt.Sprintf("send teams message is completed | status code: %d", resp.StatusCode))
+	logrus.Info(fmt.Sprintf("send teams message is completed | status code: %d", resp.StatusCode))
 
 	return nil
 }
@@ -129,12 +126,12 @@ func (w *WebhookTeamsClient) SendV2(templateMsg *TemplateTeamsMessageV2) error {
 	if err != nil {
 		return err
 	}
-	webhookTeamsReq.Header.Add(constants.ContentTypeHeader, constants.ContentTypeJSON)
+	webhookTeamsReq.Header.Add("Content-Type", "application/json")
 
 	resp, err := w.client.Do(webhookTeamsReq)
 	if resp != nil {
 		defer func(body io.ReadCloser) {
-			utils.CloseResponse(body)
+			CloseResponse(body)
 		}(resp.Body)
 	}
 
@@ -146,8 +143,7 @@ func (w *WebhookTeamsClient) SendV2(templateMsg *TemplateTeamsMessageV2) error {
 		return fmt.Errorf("failed send teams message")
 	}
 
-	logger.GetInstance().GetLogger().Info(
-		fmt.Sprintf("send teams message is completed | status code: %d", resp.StatusCode))
+	logrus.Info(fmt.Sprintf("send teams message is completed | status code: %d", resp.StatusCode))
 
 	return nil
 }
