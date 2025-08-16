@@ -109,3 +109,14 @@ func DownsizeImage(data []byte) ([]byte, error) {
 
 	return buf.Bytes(), nil
 }
+
+func RoundRobin(nums []int, idx int) (int, int) {
+	num := nums[idx]
+	idx++
+
+	if idx > len(nums)-1 {
+		idx = 0
+	}
+
+	return num, idx
+}
