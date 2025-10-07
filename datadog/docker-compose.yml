@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: tuan-app
+    environment:
+      - DD_SERVICE=tuan-service
+      - DD_ENV=dev
+      - DD_VERSION=1.0.0
+      - DD_TRACE_AGENT_PORT=8126
+      - DD_AGENT_HOST=datadog-agent
+    depends_on:
+      - datadog-agent
+    labels:
+      com.datadoghq.ad.logs: '[{"source":"python","service":"tuan-service"}]'
+    ports:
+      - "3000:3000"
+    networks:
+      - dd-network
+
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:latest
+    environment:
+      - DD_API_KEY=xxx
+      - DD_SITE=us5.datadoghq.com
+      - DD_APM_ENABLED=true
+      - DD_LOGS_ENABLED=true
+      - DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_HTTP_ENDPOINT=0.0.0.0:4318
+      - DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_GRPC_ENDPOINT=0.0.0.0:4317
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8126:8126"
+    networks:
+      - dd-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+networks:
+  dd-network:
+    driver: bridge
