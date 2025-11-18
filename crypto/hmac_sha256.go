@@ -1,3 +1,5 @@
+package crypto
+
 import (
 	"crypto/hmac"
 	"crypto/sha256"

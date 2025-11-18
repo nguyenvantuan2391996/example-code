@@ -1,3 +1,5 @@
+package crypto
+
 import (
 	"crypto/sha1"
 	"encoding/hex"

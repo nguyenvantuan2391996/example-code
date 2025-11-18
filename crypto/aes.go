@@ -1,3 +1,5 @@
+package crypto
+
 import (
 	"crypto/aes"
 	"crypto/cipher"

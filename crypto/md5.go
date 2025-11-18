@@ -1,3 +1,5 @@
+package crypto
+
 import (
 	"crypto/md5"
 	"encoding/hex"
