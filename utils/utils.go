@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"json"
+	"crypto/rand"
 )
 
 func MakeLockKey(category, identifier string) string {
@@ -37,4 +38,18 @@ func UnmarshalJSONBytes(data []byte, target interface{}) error {
 		return fmt.Errorf("failed to unmarshal json to struct: %w", err)
 	}
 	return nil
+}
+
+func GenerateRandomString(n int) (string, error) {
+	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	bytes := make([]byte, n)
+	
+	if _, err := rand.Read(bytes); err != nil {
+		return "", fmt.Errorf("failed to generate random bytes: %w", err)
+	}
+	
+	for i, b := range bytes {
+		bytes[i] = letters[b%byte(len(letters))]
+	}
+	return string(bytes), nil
 }
