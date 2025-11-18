@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"regexp"
+	"json"
 )
 
 func MakeLockKey(category, identifier string) string {
@@ -21,4 +22,19 @@ func IsValidEmail(email string) bool {
 	}
 	match, _ := regexp.MatchString(emailRegex, email)
 	return match
+}
+
+func SafeMarshalJSON(data interface{}) ([]byte, error) {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal struct to json: %w", err)
+	}
+	return jsonData, nil
+}
+
+func UnmarshalJSONBytes(data []byte, target interface{}) error {
+	if err := json.Unmarshal(data, target); err != nil {
+		return fmt.Errorf("failed to unmarshal json to struct: %w", err)
+	}
+	return nil
 }
