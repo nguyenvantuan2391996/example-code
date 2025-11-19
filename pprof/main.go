@@ -34,3 +34,10 @@ func main() {
 //| `/debug/pprof/threadcreate` | Thread create profile     |
 
 // go tool pprof http://localhost:8080/debug/pprof/profile?seconds=30
+// go tool pprof pprof.___go_build_test_bus.samples.cpu.001.pb.gz
+// (pprof) top
+// (pprof) list Foo
+// (pprof) web
+// (pprof) png
+// (pprof) pdf
+// (pprof) svg
