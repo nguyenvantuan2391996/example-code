@@ -32,3 +32,5 @@ func main() {
 //| `/debug/pprof/goroutine`    | Goroutines stack          |
 //| `/debug/pprof/block`        | Block profile             |
 //| `/debug/pprof/threadcreate` | Thread create profile     |
+
+// go tool pprof http://localhost:8080/debug/pprof/profile?seconds=30
