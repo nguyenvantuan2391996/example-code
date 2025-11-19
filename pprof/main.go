@@ -20,3 +20,15 @@ func main() {
 	log.Println("Server running on :8080")
 	r.Run(":8080")
 }
+
+//| Route                       | Description               |
+//| --------------------------- | ------------------------- |
+//| `/debug/pprof/`             | Index pprof               |
+//| `/debug/pprof/cmdline`      | Command line args         |
+//| `/debug/pprof/profile`      | CPU profile (30s default) |
+//| `/debug/pprof/symbol`       | Symbol table              |
+//| `/debug/pprof/trace`        | Execution trace           |
+//| `/debug/pprof/heap`         | Heap profile              |
+//| `/debug/pprof/goroutine`    | Goroutines stack          |
+//| `/debug/pprof/block`        | Block profile             |
+//| `/debug/pprof/threadcreate` | Thread create profile     |
