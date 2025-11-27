@@ -97,4 +97,12 @@ if __name__ == '__main__':
 
     scheduler.start()
 
+    # listing = Listing(source='VCI')
+    # df = listing.all_symbols()
+
+    # banks = df[df['organ_name'].str.contains('Ngân hàng', na=False)]
+    # bank_symbols = banks['symbol'].tolist()
+
+    # print(bank_symbols)
+
 
